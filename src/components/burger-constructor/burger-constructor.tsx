@@ -1,7 +1,7 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { TConstructorIngredient } from '@utils-types';
 import { clearConstructor } from '../../services/slices/burger';
 import { createOrder, closeOrderModal } from '../../services/slices/order';
@@ -9,13 +9,25 @@ import { createOrder, closeOrderModal } from '../../services/slices/order';
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Получаем данные из хранилища
   const { burger, order, user } = useSelector((state) => ({
     burger: state.burger,
     order: state.order,
     user: state.user
   }));
+
+  // Сбрасываем состояние при монтировании компонента
+  useEffect(() => {
+    dispatch(closeOrderModal());
+  }, [dispatch]);
+
+  // Очищаем конструктор при успешном заказе
+  useEffect(() => {
+    if (order.orderModalData) {
+      dispatch(clearConstructor());
+    }
+  }, [order.orderModalData, dispatch]);
 
   const price = useMemo(
     () =>
@@ -31,7 +43,7 @@ export const BurgerConstructor: FC = () => {
     if (!burger.bun || order.orderRequest) return;
 
     if (!user.isAuthenticated) {
-      navigate('/login');
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
 
@@ -46,7 +58,7 @@ export const BurgerConstructor: FC = () => {
 
   const handleCloseModal = () => {
     dispatch(closeOrderModal());
-    dispatch(clearConstructor());
+    navigate(location.pathname, { replace: true }); // Обновляем URL
   };
 
   return (

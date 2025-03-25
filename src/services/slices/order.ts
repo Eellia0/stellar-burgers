@@ -57,7 +57,9 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     closeOrderModal: (state) => {
+      state.orderRequest = false;
       state.orderModalData = null;
+      state.error = null;
     },
     setOrderModalData: (state, action) => {
       state.orderModalData = action.payload;
