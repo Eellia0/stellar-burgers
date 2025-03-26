@@ -10,6 +10,11 @@ import {
 import { TIngredient } from '@utils-types';
 import { useParams } from 'react-router-dom';
 
+export const formatOrderNumber = (path: string): string => {
+  const orderNumber = path.split('/').pop() || '';
+  return `#${orderNumber.padStart(6, '0')}`;
+};
+
 export const OrderInfo: FC = () => {
   const dispatch = useDispatch();
   const { number } = useParams();

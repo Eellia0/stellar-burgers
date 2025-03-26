@@ -19,6 +19,7 @@ import { useEffect } from 'react';
 import { fetchIngredients } from '../../../src/services/slices/ingredients';
 import { useDispatch } from '../../../src/services/store';
 import { checkUserAuth } from '../../../src/services/slices/user';
+import { formatOrderNumber } from '../order-info/order-info';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -89,13 +90,42 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
-        <Route path='/feed/:number' element={<OrderInfo />} />
+        <Route
+          path='/ingredients/:id'
+          element={
+            <div className={styles.detailPageWrap}>
+              <h1
+                className={`text text_type_main-large ${styles.detailHeader}`}
+              >
+                Детали ингредиента
+              </h1>
+              <IngredientDetails />
+            </div>
+          }
+        />
+        <Route
+          path='/feed/:number'
+          element={
+            <div className={styles.detailPageWrap}>
+              <p className={`text text_type_main-large ${styles.detailHeader}`}>
+                {formatOrderNumber(location.pathname)}
+              </p>
+              <OrderInfo />
+            </div>
+          }
+        />
         <Route
           path='/profile/orders/:number'
           element={
             <ProtectedRoute>
-              <OrderInfo />
+              <div className={styles.detailPageWrap}>
+                <p
+                  className={`text text_type_main-large ${styles.detailHeader}`}
+                >
+                  {formatOrderNumber(location.pathname)}
+                </p>
+                <OrderInfo />
+              </div>
             </ProtectedRoute>
           }
         />
@@ -116,17 +146,26 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='Детали заказа' onClose={handleModalClose}>
+              <Modal
+                title={formatOrderNumber(location.pathname)}
+                onClose={handleModalClose}
+              >
                 <OrderInfo />
               </Modal>
             }
           />
+
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title='Детали заказа' onClose={handleModalClose}>
-                <OrderInfo />
-              </Modal>
+              <ProtectedRoute>
+                <Modal
+                  title={formatOrderNumber(location.pathname)}
+                  onClose={handleModalClose}
+                >
+                  <OrderInfo />
+                </Modal>
+              </ProtectedRoute>
             }
           />
         </Routes>
