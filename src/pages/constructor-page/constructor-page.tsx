@@ -1,5 +1,5 @@
 import { useSelector } from '../../services/store';
-
+import { getIngredientsLoading } from '../../services/slices/ingredients';
 import styles from './constructor-page.module.css';
 
 import { BurgerIngredients } from '../../components';
@@ -8,8 +8,7 @@ import { Preloader } from '../../components/ui';
 import { FC } from 'react';
 
 export const ConstructorPage: FC = () => {
-  /** TODO: взять переменную из стора */
-  const isIngredientsLoading = false;
+  const isIngredientsLoading = useSelector(getIngredientsLoading);
 
   return (
     <>
