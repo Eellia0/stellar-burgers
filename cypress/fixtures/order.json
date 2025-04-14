@@ -1,0 +1,77 @@
+{
+    "success": true,
+    "name": "Традиционный-галактический флюоресцентный метеоритный бургер",
+    "order": {
+        "ingredients": [
+            {
+                "_id": "643d69a5c3f7b9001cfa093d",
+                "name": "Флюоресцентная булка R2-D3",
+                "type": "bun",
+                "proteins": 44,
+                "fat": 26,
+                "carbohydrates": 85,
+                "calories": 643,
+                "price": 988,
+                "image": "https://code.s3.yandex.net/react/code/bun-01.png",
+                "image_mobile": "https://code.s3.yandex.net/react/code/bun-01-mobile.png",
+                "image_large": "https://code.s3.yandex.net/react/code/bun-01-large.png",
+                "__v": 0
+            },
+            {
+                "_id": "643d69a5c3f7b9001cfa0940",
+                "name": "Говяжий метеорит (отбивная)",
+                "type": "main",
+                "proteins": 800,
+                "fat": 800,
+                "carbohydrates": 300,
+                "calories": 2674,
+                "price": 3000,
+                "image": "https://code.s3.yandex.net/react/code/meat-04.png",
+                "image_mobile": "https://code.s3.yandex.net/react/code/meat-04-mobile.png",
+                "image_large": "https://code.s3.yandex.net/react/code/meat-04-large.png",
+                "__v": 0
+            },
+            {
+                "_id": "643d69a5c3f7b9001cfa0944",
+                "name": "Соус традиционный галактический",
+                "type": "sauce",
+                "proteins": 42,
+                "fat": 24,
+                "carbohydrates": 42,
+                "calories": 99,
+                "price": 15,
+                "image": "https://code.s3.yandex.net/react/code/sauce-03.png",
+                "image_mobile": "https://code.s3.yandex.net/react/code/sauce-03-mobile.png",
+                "image_large": "https://code.s3.yandex.net/react/code/sauce-03-large.png",
+                "__v": 0
+            },
+            {
+                "_id": "643d69a5c3f7b9001cfa093d",
+                "name": "Флюоресцентная булка R2-D3",
+                "type": "bun",
+                "proteins": 44,
+                "fat": 26,
+                "carbohydrates": 85,
+                "calories": 643,
+                "price": 988,
+                "image": "https://code.s3.yandex.net/react/code/bun-01.png",
+                "image_mobile": "https://code.s3.yandex.net/react/code/bun-01-mobile.png",
+                "image_large": "https://code.s3.yandex.net/react/code/bun-01-large.png",
+                "__v": 0
+            }
+        ],
+        "_id": "67fd4dd1e8e61d001cec29f4",
+        "owner": {
+            "name": "Eellia",
+            "email": "o.oeellia@gmail.com",
+            "createdAt": "2025-01-24T12:10:34.693Z",
+            "updatedAt": "2025-04-14T13:13:02.218Z"
+        },
+        "status": "done",
+        "name": "Традиционный-галактический флюоресцентный метеоритный бургер",
+        "createdAt": "2025-04-14T18:02:57.084Z",
+        "updatedAt": "2025-04-14T18:02:57.769Z",
+        "number": 74626,
+        "price": 4991
+    }
+}

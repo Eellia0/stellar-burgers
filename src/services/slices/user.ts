@@ -11,7 +11,7 @@ import {
 } from '@api';
 import { setCookie, deleteCookie } from '../../../src/utils/cookie';
 
-type TUserState = {
+export type TUserState = {
   isAuthChecked: boolean;
   isAuthenticated: boolean;
   user: TUser | null;
@@ -97,7 +97,7 @@ export const checkUserAuth = createAsyncThunk(
   }
 );
 
-const userSlice = createSlice({
+export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {

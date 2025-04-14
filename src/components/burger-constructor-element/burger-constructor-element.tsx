@@ -30,6 +30,7 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
         handleMoveUp={handleMoveUp}
         handleMoveDown={handleMoveDown}
         handleClose={handleClose}
+        data-cy={ingredient.id}
       />
     );
   }

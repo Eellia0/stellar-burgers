@@ -3,7 +3,7 @@ import { getFeedsApi, getOrderByNumberApi } from '@api';
 import { TOrder } from '@utils-types';
 import { RootState } from '../store';
 
-type TFeedsState = {
+export type TFeedsState = {
   orders: TOrder[];
   total: number;
   totalToday: number;
@@ -43,7 +43,7 @@ export const fetchOrderByNumber = createAsyncThunk(
   }
 );
 
-const feedsSlice = createSlice({
+export const feedsSlice = createSlice({
   name: 'feeds',
   initialState,
   reducers: {},
@@ -61,7 +61,10 @@ const feedsSlice = createSlice({
       })
       .addCase(fetchFeeds.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error =
+          typeof action.payload === 'string'
+            ? action.payload
+            : action.error?.message || 'Unknown error';
       })
       .addCase(fetchOrderByNumber.pending, (state) => {
         state.isLoading = true;
@@ -72,7 +75,10 @@ const feedsSlice = createSlice({
       })
       .addCase(fetchOrderByNumber.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error =
+          typeof action.payload === 'string'
+            ? action.payload
+            : action.error?.message || 'Unknown error';
       });
   },
   selectors: {
