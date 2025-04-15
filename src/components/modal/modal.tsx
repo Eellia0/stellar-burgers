@@ -13,15 +13,15 @@ export const Modal: FC<TModalProps> = memo(({ title, onClose, children }) => {
     };
 
     document.addEventListener('keydown', handleEsc);
-    return () => {
-      document.removeEventListener('keydown', handleEsc);
-    };
+    return () => document.removeEventListener('keydown', handleEsc);
   }, [onClose]);
+
+  if (!modalRoot) return null;
 
   return ReactDOM.createPortal(
     <ModalUI title={title} onClose={onClose}>
       {children}
     </ModalUI>,
-    modalRoot as HTMLDivElement
+    modalRoot
   );
 });
