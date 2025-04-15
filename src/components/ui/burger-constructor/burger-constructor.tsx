@@ -20,7 +20,10 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
 }) => (
   <section className={styles.burger_constructor} data-cy='constructor'>
     {constructorItems.bun ? (
-      <div className={`${styles.element} mb-4 mr-4`}>
+      <div
+        className={`${styles.element} mb-4 mr-4`}
+        data-cy='constructor-bun-top'
+      >
         <ConstructorElement
           type='top'
           isLocked
@@ -32,11 +35,12 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     ) : (
       <div
         className={`${styles.noBuns} ${styles.noBunsTop} ml-8 mb-4 mr-5 text text_type_main-default`}
+        data-cy='constructor-no-bun-top'
       >
         Выберите булки
       </div>
     )}
-    <ul className={styles.elements}>
+    <ul className={styles.elements} data-cy='constructor-main'>
       {constructorItems.ingredients.length > 0 ? (
         constructorItems.ingredients.map(
           (item: TConstructorIngredient, index: number) => (
@@ -45,19 +49,24 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
               index={index}
               totalItems={constructorItems.ingredients.length}
               key={item.id}
+              data-cy={`constructor-ingredient-${index}`}
             />
           )
         )
       ) : (
         <div
           className={`${styles.noBuns} ml-8 mb-4 mr-5 text text_type_main-default`}
+          data-cy='constructor-no-main'
         >
           Выберите начинку
         </div>
       )}
     </ul>
     {constructorItems.bun ? (
-      <div className={`${styles.element} mt-4 mr-4`}>
+      <div
+        className={`${styles.element} mt-4 mr-4`}
+        data-cy='constructor-bun-bottom'
+      >
         <ConstructorElement
           type='bottom'
           isLocked
@@ -69,12 +78,13 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     ) : (
       <div
         className={`${styles.noBuns} ${styles.noBunsBottom} ml-8 mb-4 mr-5 text text_type_main-default`}
+        data-cy='constructor-no-bun-bottom'
       >
         Выберите булки
       </div>
     )}
-    <div className={`${styles.total} mt-10 mr-4`}>
-      <div className={`${styles.cost} mr-10`}>
+    <div className={`${styles.total} mt-10 mr-4`} data-cy='constructor-total'>
+      <div className={`${styles.cost} mr-10`} data-cy='constructor-price'>
         <p className={`text ${styles.text} mr-2`}>{price}</p>
         <CurrencyIcon type='primary' />
       </div>
@@ -89,7 +99,11 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     </div>
 
     {orderRequest && (
-      <Modal onClose={closeOrderModal} title={'Оформляем заказ...'}>
+      <Modal
+        onClose={closeOrderModal}
+        title={'Оформляем заказ...'}
+        data-cy='modal-loading'
+      >
         <Preloader />
       </Modal>
     )}
@@ -98,8 +112,12 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
       <Modal
         onClose={closeOrderModal}
         title={orderRequest ? 'Оформляем заказ...' : ''}
+        data-cy='modal-order'
       >
-        <OrderDetailsUI orderNumber={orderModalData.number} />
+        <OrderDetailsUI
+          orderNumber={orderModalData.number}
+          data-cy='order-number'
+        />
       </Modal>
     )}
   </section>

@@ -30,19 +30,20 @@ describe('Добавление ингредиента в конструктор 
         (ingredient) => ingredient.type !== 'bun'
       );
 
-      // Кликаем по кнопке "Добавить"
+      // 1. Проверяем, что ингредиента еще нет в конструкторе
+      cy.get('[data-cy="constructor"]').should('not.contain', ingredient.name);
+      cy.get('.constructor-element').should('not.exist');
+
+      // 2. Кликаем по кнопке "Добавить"
       cy.get(`[data-cy="${ingredient._id}"]`).within(() => {
         cy.get('button').click({ force: true });
       });
 
-      // Ожидаем, пока ингредиент появится в конструкторе
+      // 3. Проверяем, что ингредиент появился в конструкторе
       cy.get('[data-cy="constructor"]').should('exist');
-
-      // Ожидание перед проверкой
-      cy.wait(500);
-
-      // Проверяем, что ингредиент появился в конструкторе
-      cy.get('.constructor-element').should('contain.text', ingredient.name);
+      cy.get('.constructor-element')
+        .should('exist')
+        .and('contain.text', ingredient.name);
     });
   });
 });
@@ -66,7 +67,14 @@ describe('Открытие модального окна ингредиента'
       cy.get('[data-cy="modal"]').should('exist');
 
       // Проверяем, что в модальном окне отображается нужный ингредиент
-      cy.contains(ingredient.name).should('exist');
+      // Альтернативный вариант проверок для текущей структуры
+      cy.get('[data-cy="modal"]').should('exist');
+      cy.get('[data-cy="modal"]').within(() => {
+        // Проверяем что children содержит нужный ингредиент
+        cy.get('*').should('contain', ingredient.name);
+        // Или ищем по тексту внутри модалки
+        cy.contains(ingredient.name).should('be.visible');
+      });
     });
   });
 });
@@ -132,42 +140,74 @@ describe('Закрытие модального окна по клику на о
   });
 });
 
-describe('Редирект на страницу логина при оформлении заказа без авторизации', () => {
+describe('Успешное оформление заказа', () => {
   beforeEach(() => {
     cy.intercept('GET', '/api/ingredients', { fixture: 'ingredients.json' }).as(
-      'getIngredients'
+      'ingredients'
     );
-    cy.intercept('POST', '/api/orders', { fixture: 'order.json' }).as(
-      'postOrder'
-    );
-    cy.intercept('GET', '/api/auth/user', { statusCode: 401, body: {} }); // Симулируем, что пользователь НЕ залогинен
+    cy.intercept('GET', '/api/orders/all', { fixture: 'feed.json' }).as('feed');
+    cy.intercept('GET', '/api/auth/user', { fixture: 'user.json' }).as('user');
+    cy.setCookie('accessToken', 'mockAccessTokenForJohnT');
+    localStorage.setItem('refreshToken', 'mockRefreshTokenForJohnT');
+
+    cy.visit('/');
+    cy.wait(['@ingredients', '@user']);
+    cy.get('#modals').should('be.empty');
   });
 
-  it('Перенаправляет на логин при попытке оформить заказ', () => {
-    cy.visit('/');
-    cy.wait('@getIngredients');
+  afterEach(() => {
+    cy.clearCookies();
+    cy.clearLocalStorage();
+  });
 
-    cy.fixture('ingredients.json').then((data) => {
-      const bun = data.data.find((ingredient) => ingredient.type === 'bun');
-      const filling = data.data.find(
-        (ingredient) => ingredient.type === 'main'
-      );
+  it('Полный цикл оформления заказа', () => {
+    cy.fixture('ingredients.json').then((ingredients) => {
+      console.log(ingredients.data); // Проверяем фикстуру
 
-      // Добавляем булку
-      cy.get(`[data-cy="${bun._id}"]`).within(() => {
-        cy.get('button').click();
-      });
+      const bun = ingredients.data.find((i) => i.type === 'bun');
+      const main = ingredients.data.find((i) => i.type === 'main');
+      const sauce = ingredients.data.find((i) => i.type === 'sauce');
 
-      // Добавляем начинку
-      cy.get(`[data-cy="${filling._id}"]`).within(() => {
-        cy.get('button').click();
-      });
+      // 1. Добавление булки
+      cy.get(`[data-cy="${bun._id}"]`).within(() => cy.get('button').click());
+      cy.wait(1000); // Даем время на обновление UI
+      cy.get('[data-cy="constructor"]').should('contain', bun.name);
+
+      // 2. Добавление начинки
+      cy.get(`[data-cy="${main._id}"]`).within(() => cy.get('button').click());
+      cy.wait(1000);
+      cy.get('[data-cy="constructor"]').should('contain', main.name);
+
+      // 3. Добавление соуса
+      cy.get(`[data-cy="${sauce._id}"]`).within(() => cy.get('button').click());
+      cy.wait(1000);
+      cy.get('[data-cy="constructor-main"]').should('contain', sauce.name); // Вместо "constructor-sauce"
     });
 
-    // Нажимаем "Оформить заказ"
-    cy.get('[data-cy="constructor-button"]').click();
+    // 4. Оформление заказа
+    cy.intercept('POST', '/api/orders', { fixture: 'order.json' }).as(
+      'placeOrder'
+    );
+    cy.get('button').contains('Оформить заказ').click();
+    cy.wait('@placeOrder');
 
-    // Проверяем, что произошел редирект на `/login`
-    cy.url().should('include', '/login');
+    // 5. Проверка модального окна
+    cy.get('#modals').should('be.visible');
+    cy.get('[data-cy="order-number"]')
+      .invoke('text')
+      .then((orderNumber) => {
+        expect(orderNumber).to.match(/^\d+$/); // Проверяем, что это только цифры
+      });
+
+    // 6. Закрытие модалки
+    cy.get('[data-cy="modal-close"]').click();
+    cy.get('[data-cy="modal"]').should('not.exist');
+
+    // 7. Проверка очистки конструктора
+    cy.wait(1000);
+    cy.get('[data-cy="constructor"]').should(
+      'not.contain',
+      'Краторная булка N-200i'
+    );
   });
 });
